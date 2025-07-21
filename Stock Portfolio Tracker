@@ -1,0 +1,91 @@
+import matplotlib.pyplot as plt
+
+StockPrize={
+  "JIO":3000,
+  "TCS":3500,
+  "DEL":4000,
+  "INFOSYS":4500,
+  "WIPRO":5000,
+  "TATA":6000,
+}
+
+def get_input():
+  portfolio={}
+  print("\n"+"="*40)
+  print("Stock Portfolio Tracker")
+  print("="*40)
+  print("Available Stocks:",",".join(StockPrize.keys()))
+
+  while True:
+    print("\n"+"-"*40)
+    stock=input("Enter the Stock Symbol (or 'done' to finish): ").upper()
+    if stock == 'DONE':
+      break
+    if stock not in StockPrize:
+      print(f"Error: {stock} not in our database. Available stocks: {', '.join(StockPrize.keys())}")
+      continue
+
+    try:
+      quantity = float(input(f"Enter quantity of {stock}: "))
+      if quantity <= 0:
+          print("Quantity must be positive")
+          continue
+      portfolio[stock]=quantity
+    except ValueError:
+      print("Invalid Input ! Enter A Valid Number.")
+  return portfolio
+    
+def cal_portfolio_value(portfolio):
+   total_value = 0
+   stock_values = {}
+   for stock,quantity in portfolio.items():
+     value=quantity *StockPrize[stock]
+     stock_values[stock]=value
+     total_value += value
+
+   return total_value, stock_values
+
+
+def display_results(portfolio, total_value, stock_values):
+  print("\n"+"="*40)
+  print("PORTFOLIO SUMMARY")
+  print("="*40)
+  print("\nStock\tQuantity\tPrice\t\tValue")
+  print("-"*40)
+  for stock in portfolio:
+    print(f"{stock}\t{portfolio[stock]}\t\t₹{StockPrize[stock]}\t\t₹{stock_values[stock]}")
+    print("\n"+"-"*40)
+    print(f"TOTAL PORTFOLIO VALUE: ₹{total_value}")
+    print("-"*40)
+
+
+def show_piechart(stock_values):
+   if not stock_values:
+        print("No data to display in pie chart")
+        return
+        
+   labels = stock_values.keys()
+   sizes = stock_values.values() 
+
+   plt.figure(figsize=(8,6))
+   plt.pie(sizes, labels=labels, autopct='%1.1f%%')
+   plt.axis('equal')
+   plt.title("Portfolio Distribution By Stock Value")
+   plt.show()
+
+def main():
+   portfolio= get_input()
+
+   if not  portfolio:
+      print("\n NO Stock Entered. Exiting.....")
+      return
+   
+   total_value,stock_values=cal_portfolio_value(portfolio)
+   display_results(portfolio,total_value,stock_values)
+
+   show_chart=input("\n Would You Like To See The Pie Chart Of Your Portfolio?(y/n):").lower()
+   if show_chart == "y":
+      show_piechart(stock_values)
+
+if __name__ == "__main__":
+    main()
